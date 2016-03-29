@@ -1620,3 +1620,16 @@ uintegerFromBytes bs =
         Nothing       -> acc
         Just (w, ws') -> go (acc `shiftL` 8 + fromIntegral w) ws'
 
+#if !MIN_VERSION_base(4,7,0)
+-- GHC 7.6.x doesn't have orI#, so emulate it in a very
+-- dumb way.
+
+-- TODO FIXME: reduce rubbish-ness by at least 1000% someday,
+-- if possible.
+orI# :: Int# -> Int# -> Int#
+orI# x# y# = z
+  where
+    x      = I# x#
+    y      = I# y#
+    (I# z) = x .|. y
+#endif
